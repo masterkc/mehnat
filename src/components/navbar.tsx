@@ -11,7 +11,6 @@ const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/loans", label: "Loans" },
   { href: "/insurance", label: "Insurance" },
-  { href: "/chat", label: "Chat" },
   { href: "/about", label: "About" },
 ];
 

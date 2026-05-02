@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MessageCircle, Banknote, Shield, User } from "lucide-react";
+import { Home, LayoutDashboard, Banknote, Shield, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/chat", label: "Chat", icon: MessageCircle },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/loans", label: "Loans", icon: Banknote },
   { href: "/insurance", label: "Insurance", icon: Shield },
   { href: "/login", label: "Profile", icon: User },
