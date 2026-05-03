@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { X, Check, ShieldAlert, ArrowRight, BookOpen } from "lucide-react";
+import { X, Check, ShieldAlert, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function LearnOverlay({ onClose }: { onClose: () => void }) {

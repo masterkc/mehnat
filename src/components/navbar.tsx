@@ -20,8 +20,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isLearnOpen, setIsLearnOpen] = useState(false);
 
-  if (pathname === "/demo") return null;
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -29,6 +27,8 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (pathname === "/demo") return null;
 
   return (
     <motion.header
