@@ -213,7 +213,7 @@ export default function InvestPage() {
               </div>
               <div className="h-40">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData}><XAxis dataKey="year" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} /><YAxis hide /><Tooltip contentStyle={{ backgroundColor: "#161B22", border: "1px solid #30363D", borderRadius: 8, color: "#fff", fontSize: 12 }} formatter={(v: number) => [`₹${v.toLocaleString()}`, "Value"]} /><Bar dataKey="value" fill="#059669" radius={[4, 4, 0, 0]} /></BarChart>
+                  <BarChart data={chartData}><XAxis dataKey="year" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} /><YAxis hide /><Tooltip contentStyle={{ backgroundColor: "#161B22", border: "1px solid #30363D", borderRadius: 8, color: "#fff", fontSize: 12 }} formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, "Value"]} /><Bar dataKey="value" fill="#059669" radius={[4, 4, 0, 0]} /></BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
