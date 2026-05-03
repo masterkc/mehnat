@@ -9,7 +9,6 @@ import {
   Shield,
   Bell,
   Clock,
-  Rocket,
   SendHorizontal,
   MessageSquare,
 } from "lucide-react";

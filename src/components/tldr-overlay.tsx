@@ -224,7 +224,10 @@ export default function TldrOverlay({ onClose }: { onClose: () => void }) {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             animate={{ textShadow: ["0 0 0px #F59E0B", "0 0 20px #F59E0B", "0 0 0px #F59E0B"] }}
-            transition={{ opacity: { duration: 1 }, animate: { duration: 3, repeat: Infinity } }}
+            transition={{ 
+              opacity: { duration: 1 }, 
+              textShadow: { duration: 3, repeat: Infinity } 
+            }}
             className="text-6xl md:text-8xl font-black mb-6"
           >
             Mehnat.
