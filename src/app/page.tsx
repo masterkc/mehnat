@@ -10,7 +10,6 @@ import {
   Bell,
   Clock,
   Rocket,
-  Quote,
   SendHorizontal,
   MessageSquare,
 } from "lucide-react";
@@ -238,54 +237,8 @@ const particles = [
 ];
 
 /* ───────────────────── Partner logos with brand colors ───────────────────── */
-const partnerLogos = [
-  { name: "Swiggy",        bg: "#FC8019", text: "#fff",    emoji: "🛵" },
-  { name: "Zomato",        bg: "#E23744", text: "#fff",    emoji: "🍕" },
-  { name: "Ola",           bg: "#1C1C1C", text: "#fff",    emoji: "🚖" },
-  { name: "Rapido",        bg: "#FFCC00", text: "#000",    emoji: "⚡" },
-  { name: "Urban Company", bg: "#00B4A2", text: "#fff",    emoji: "🔧" },
-  { name: "Dunzo",         bg: "#00D37F", text: "#000",    emoji: "📦" },
-  { name: "Blinkit",       bg: "#F8D000", text: "#000",    emoji: "🟡" },
-  { name: "Zepto",         bg: "#7C3AED", text: "#fff",    emoji: "🚀" },
-];
-
 /* ───────────────────── Feature Cards Data ───────────────────── */
-const features = [
-  {
-    icon: TrendingUp,
-    title: "Daily Allowance",
-    desc: "AI predicts your safe daily spend based on your actual earnings — no more anxiety about running out.",
-  },
-  {
-    icon: Zap,
-    title: "Instant Micro-Loans",
-    desc: "Need ₹5,000 for bike repair? Get it in 4 minutes. Repaid automatically from your next payouts.",
-  },
-  {
-    icon: Shield,
-    title: "₹15/month Insurance",
-    desc: "Income protection, health cover, and accident insurance bundled — auto-claimed, no paperwork.",
-  },
-];
-
 /* ───────────────────── Steps ───────────────────── */
-const steps = [
-  {
-    icon: Bell,
-    title: "Allow notification access",
-    desc: "Mehnat reads your earning notifications from Swiggy, Zomato, Ola, Rapido — all apps, one place. No account linking needed.",
-  },
-  {
-    icon: Clock,
-    title: "Get your daily allowance every morning at 6 AM",
-    desc: "Our AI crunches your earnings and upcoming expenses overnight.",
-  },
-  {
-    icon: Rocket,
-    title: "Access loans and insurance when you need them",
-    desc: "One-tap micro-loans and zero-paperwork insurance, always ready.",
-  },
-];
 
 /* ═══════════════════════ PAGE ═══════════════════════ */
 export default function Home() {

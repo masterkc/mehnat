@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { X, ArrowDown } from "lucide-react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { X, ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const qna = [

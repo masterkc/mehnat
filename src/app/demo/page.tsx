@@ -6,7 +6,7 @@ import {
   Home, MessageCircle, Zap, Shield, Battery, Wifi, Signal, Play, 
   SendHorizontal, ArrowUpRight, ArrowDownRight, Clock, MapPin, 
   Coffee, CircleDollarSign, LineChart, User, Settings, HelpCircle, 
-  CheckCircle2, ChevronRight, Building2, Smartphone, Download, Menu, X
+  CheckCircle2, Download, Menu, X
 } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
