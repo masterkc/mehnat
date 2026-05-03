@@ -83,20 +83,17 @@ const preloaded: ChatMsg[] = [
   { sender: "ai",   text: "Done ✓ Aaj ₹600 use kar sakte ho. Birthday enjoy karo! 🎉",                       time: "8:24 AM" },
 ];
 
-const CANNED: Record<string, string> = {
-  loan:     "Aap ₹8,500 ke eligible hain. 4 minute mein transfer. Lena hai?",
-  insurance:"Aapka ₹15/month plan active hai ✓ Income protection + ₹2L health cover.",
-  kharcha:  "Aaj ₹420 safe hai bhai. Abhi ₹80 bache hain.",
-  kitna:    "Aaj ₹420 safe hai bhai. Abhi ₹80 bache hain.",
-};
-
 function MiniChat() {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     let i = 0;
     const show = () => {
       if (i < preloaded.length) {
@@ -122,19 +119,45 @@ function MiniChat() {
     if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight;
   }, [messages, typing]);
 
-  const send = () => {
+  const send = async () => {
     const q = input.trim();
     if (!q) return;
+
     const userMsg: ChatMsg = { sender: "user", text: q, time: "Now" };
-    setMessages((m) => [...m, userMsg]);
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInput("");
     setTyping(true);
-    const key = Object.keys(CANNED).find((k) => q.toLowerCase().includes(k));
-    const reply = key ? CANNED[key] : "Yeh feature V2 mein aa raha hai! Abhi allowance, loans aur insurance ke liye poochho.";
-    setTimeout(() => {
+
+    try {
+      const apiMessages = newMessages.map(m => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text
+      }));
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: apiMessages })
+      });
+
+      const data = await res.json();
+      
       setTyping(false);
-      setMessages((m) => [...m, { sender: "ai", text: reply, time: "Now" }]);
-    }, 1200);
+      setMessages((prev) => [...prev, { 
+        sender: "ai", 
+        text: data.reply || "Sorry bhai, thoda confusion ho gaya.", 
+        time: "Now" 
+      }]);
+    } catch (error) {
+      console.error(error);
+      setTyping(false);
+      setMessages((prev) => [...prev, { 
+        sender: "ai", 
+        text: "Sorry bhai, network issue lag raha hai. Try again later.", 
+        time: "Now" 
+      }]);
+    }
   };
 
   return (

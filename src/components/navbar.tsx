@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import LearnOverlay from "./learn-overlay";
+import TldrOverlay from "./tldr-overlay";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -19,6 +20,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [isLearnOpen, setIsLearnOpen] = useState(false);
+  const [isTldrOpen, setIsTldrOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,10 +45,29 @@ export default function Navbar() {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Left: Wordmark */}
-        <Link href="/" className="text-xl font-bold text-white">
-          Mehnat
-        </Link>
+        {/* Left Section */}
+        <div className="flex items-center gap-3">
+          {/* Logo (Desktop only) */}
+          <Link href="/" className="text-xl font-bold text-white hidden md:block">
+            Mehnat
+          </Link>
+
+          {/* Mobile Top Left Buttons */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={() => setIsTldrOpen(true)}
+              className="rounded-full bg-[#D97706] px-3 py-1 text-[11px] font-bold text-white"
+            >
+              TLDR
+            </button>
+            <Link
+              href="/demo"
+              className="rounded-md bg-[#7C3AED] px-3 py-1 text-[11px] font-bold text-white"
+            >
+              Try App
+            </Link>
+          </div>
+        </div>
 
         {/* Center: Navigation Links (hidden on mobile) */}
         <div className="hidden md:flex items-center gap-1">
@@ -73,29 +94,40 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Right: Auth Actions */}
-        <div className="flex items-center gap-4">
+        {/* Right: Actions */}
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             onClick={() => setIsLearnOpen(true)}
-            className="hidden sm:block rounded-md border border-[#F59E0B]/50 bg-[#F59E0B]/5 px-4 py-2 text-sm font-semibold text-[#F59E0B] transition-all hover:bg-[#F59E0B]/10 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+            className="hidden sm:block rounded-md border border-[#F59E0B]/50 bg-[#F59E0B]/5 px-4 py-2 text-sm font-semibold text-[#F59E0B] transition-all hover:bg-[#F59E0B]/10"
           >
             Learn
           </button>
+          
+          {/* TLDR Button (Desktop) */}
+          <button
+            onClick={() => setIsTldrOpen(true)}
+            className="hidden md:block rounded-full bg-[#D97706] px-4 py-1.5 text-xs font-bold text-white transition-transform hover:scale-105 active:scale-95"
+          >
+            TLDR
+          </button>
+
           <Link
             href="/login"
-            className="text-sm font-medium text-[#8B949E] hover:text-white transition-colors"
+            className="hidden sm:block text-sm font-medium text-[#8B949E] hover:text-white transition-colors"
           >
             Login
           </Link>
+          
           <Link
             href="/login"
             className="hidden md:block rounded-md bg-[#238636] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2EA043]"
           >
             Get Started
           </Link>
+          
           <Link
             href="/demo"
-            className="rounded-md bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#8B5CF6]"
+            className="hidden md:flex rounded-md bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#8B5CF6]"
           >
             Try App →
           </Link>
@@ -104,6 +136,7 @@ export default function Navbar() {
 
       <AnimatePresence>
         {isLearnOpen && <LearnOverlay onClose={() => setIsLearnOpen(false)} />}
+        {isTldrOpen && <TldrOverlay onClose={() => setIsTldrOpen(false)} />}
       </AnimatePresence>
     </motion.header>
   );
