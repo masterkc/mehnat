@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutDashboard, Banknote, Shield, User } from "lucide-react";
+import { Home, LayoutDashboard, LineChart, Banknote, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/invest", label: "Invest", icon: LineChart },
   { href: "/loans", label: "Loans", icon: Banknote },
-  { href: "/insurance", label: "Insurance", icon: Shield },
-  { href: "/login", label: "Profile", icon: User },
+  { href: "/account", label: "Account", icon: User },
 ];
 
 export default function MobileNav() {
   const pathname = usePathname();
+
+  if (pathname === "/demo") return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#30363D] bg-[#161B22] md:hidden">

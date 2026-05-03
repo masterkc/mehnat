@@ -3,20 +3,24 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import LearnOverlay from "./learn-overlay";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/invest", label: "Invest" },
   { href: "/loans", label: "Loans" },
-  { href: "/insurance", label: "Insurance" },
-  { href: "/about", label: "About" },
+  { href: "/account", label: "Account" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [isLearnOpen, setIsLearnOpen] = useState(false);
+
+  if (pathname === "/demo") return null;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,6 +75,12 @@ export default function Navbar() {
 
         {/* Right: Auth Actions */}
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsLearnOpen(true)}
+            className="hidden sm:block rounded-md border border-[#F59E0B]/50 bg-[#F59E0B]/5 px-4 py-2 text-sm font-semibold text-[#F59E0B] transition-all hover:bg-[#F59E0B]/10 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+          >
+            Learn
+          </button>
           <Link
             href="/login"
             className="text-sm font-medium text-[#8B949E] hover:text-white transition-colors"
@@ -79,12 +89,22 @@ export default function Navbar() {
           </Link>
           <Link
             href="/login"
-            className="rounded-md bg-[#238636] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2EA043]"
+            className="hidden md:block rounded-md bg-[#238636] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2EA043]"
           >
             Get Started
           </Link>
+          <Link
+            href="/demo"
+            className="rounded-md bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#8B5CF6]"
+          >
+            Try App →
+          </Link>
         </div>
       </nav>
+
+      <AnimatePresence>
+        {isLearnOpen && <LearnOverlay onClose={() => setIsLearnOpen(false)} />}
+      </AnimatePresence>
     </motion.header>
   );
 }

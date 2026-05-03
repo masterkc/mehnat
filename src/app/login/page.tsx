@@ -327,26 +327,7 @@ function PartnerLogin({
         )}
       </AnimatePresence>
 
-      {/* ── OR divider ── */}
-      <div className="flex items-center gap-4 my-6">
-        <div className="flex-1 h-px bg-navy-600" />
-        <span className="text-xs text-gray-500 uppercase tracking-wider">
-          or
-        </span>
-        <div className="flex-1 h-px bg-navy-600" />
-      </div>
 
-      {/* ── Platform buttons ── */}
-      <div className="space-y-3">
-        {platforms.map((p) => (
-          <button
-            key={p.name}
-            className={`w-full py-3 rounded-lg font-medium text-sm transition-opacity hover:opacity-90 ${p.bg} ${p.text} ${p.border}`}
-          >
-            Continue with {p.name === "Urban Company" ? "Urban Company" : `${p.name} Account`}
-          </button>
-        ))}
-      </div>
 
       <p className="mt-6 text-center text-xs text-gray-400">
         New partner?{" "}

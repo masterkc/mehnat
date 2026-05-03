@@ -1,9 +1,13 @@
-"use client";
+const fs = require('fs');
+const path = require('path');
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import {
+const pagePath = path.join(__dirname, '..', 'src', 'app', 'page.tsx');
+let content = fs.readFileSync(pagePath, 'utf8');
+
+// Update imports
+content = content.replace(
+  /import {\s*TrendingUp,\s*Zap,\s*Shield,\s*Bell,\s*Clock,\s*Rocket,\s*Quote,\s*SendHorizontal,\s*} from "lucide-react";/s,
+  `import {
   TrendingUp,
   Zap,
   Shield,
@@ -14,9 +18,13 @@ import {
   SendHorizontal,
   MessageSquare,
 } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";`
+);
 
-/* ───────────────────── Chart Data ───────────────────── */
+// Add chart data
+content = content.replace(
+  /\/\* ═══════════════════════ PAGE ═══════════════════════ \*\//,
+  `/* ───────────────────── Chart Data ───────────────────── */
 const chartData = [
   { day: 'Oct 15', actual: 400 },
   { day: 'Oct 16', actual: 450 },
@@ -40,305 +48,19 @@ const chartData = [
   { day: 'Nov 03', predicted: 1100 },
 ];
 
-/* ───────────────────── Animated Counter Hook ───────────────────── */
-function useCountUp(target: number, duration = 1500) {
-  const [value, setValue] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const hasRun = useRef(false);
+/* ═══════════════════════ PAGE ═══════════════════════ */`
+);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasRun.current) {
-          hasRun.current = true;
-          const start = performance.now();
-          const tick = (now: number) => {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - (1 - progress) * (1 - progress);
-            setValue(Math.round(eased * target));
-            if (progress < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target, duration]);
-
-  return { value, ref };
+// Replace everything after MARQUEE with the new sections
+const marqueeMarker = "{/* ─── PARTNER MARQUEE STRIP ─── */}";
+if (content.indexOf(marqueeMarker) === -1) {
+  console.error("Marquee marker not found!");
+  process.exit(1);
 }
 
-/* ───────────────────── Mini Chat Component ───────────────────── */
-interface ChatMsg { sender: "ai" | "user"; text: string; time: string }
+const beforeMarquee = content.substring(0, content.indexOf(marqueeMarker));
 
-const preloaded: ChatMsg[] = [
-  { sender: "ai",   text: "Namaste, Rajesh bhai 🙏",                                                          time: "6:00 AM" },
-  { sender: "ai",   text: "🎙️ Aaj aap ₹420 tak kharch kar sakte ho. Friday hai — expected kamai ₹780. Ride safe!", time: "6:00 AM" },
-  { sender: "user", text: "Bhai aaj ₹600 chahiye, dost ki birthday hai 🎂",                                   time: "8:23 AM" },
-  { sender: "ai",   text: "Done ✓ Aaj ₹600 use kar sakte ho. Birthday enjoy karo! 🎉",                       time: "8:24 AM" },
-];
-
-const CANNED: Record<string, string> = {
-  loan:     "Aap ₹8,500 ke eligible hain. 4 minute mein transfer. Lena hai?",
-  insurance:"Aapka ₹15/month plan active hai ✓ Income protection + ₹2L health cover.",
-  kharcha:  "Aaj ₹420 safe hai bhai. Abhi ₹80 bache hain.",
-  kitna:    "Aaj ₹420 safe hai bhai. Abhi ₹80 bache hain.",
-};
-
-function MiniChat() {
-  const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const [input, setInput] = useState("");
-  const [typing, setTyping] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let i = 0;
-    const show = () => {
-      if (i < preloaded.length) {
-        const msg = preloaded[i++];
-        if (msg.sender === "ai") {
-          setTyping(true);
-          setTimeout(() => {
-            setTyping(false);
-            setMessages((m) => [...m, msg]);
-            setTimeout(show, 800);
-          }, 900);
-        } else {
-          setMessages((m) => [...m, msg]);
-          setTimeout(show, 600);
-        }
-      }
-    };
-    const t = setTimeout(show, 600);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight;
-  }, [messages, typing]);
-
-  const send = () => {
-    const q = input.trim();
-    if (!q) return;
-    const userMsg: ChatMsg = { sender: "user", text: q, time: "Now" };
-    setMessages((m) => [...m, userMsg]);
-    setInput("");
-    setTyping(true);
-    const key = Object.keys(CANNED).find((k) => q.toLowerCase().includes(k));
-    const reply = key ? CANNED[key] : "Yeh feature V2 mein aa raha hai! Abhi allowance, loans aur insurance ke liye poochho.";
-    setTimeout(() => {
-      setTyping(false);
-      setMessages((m) => [...m, { sender: "ai", text: reply, time: "Now" }]);
-    }, 1200);
-  };
-
-  return (
-    <div className="flex flex-col bg-[#161B22] border-[8px] border-[#30363D] rounded-[2.5rem] overflow-hidden w-full max-w-[320px] sm:max-w-[360px] shadow-[0_0_40px_8px_rgba(168,85,247,0.1)] h-[600px] relative">
-      {/* Dynamic Island / Notch Mock */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#30363D] rounded-b-2xl z-20"></div>
-
-      {/* Header */}
-      <div className="flex items-center gap-2 px-5 pt-8 pb-4 border-b border-[#30363D] bg-[#21262D] relative z-10">
-        <div className="w-2 h-2 rounded-full bg-[#A855F7]" />
-        <span className="text-sm font-semibold text-white">Mehnat AI</span>
-        <span className="ml-auto text-xs text-gray-500">Your financial partner</span>
-      </div>
-
-      {/* Messages */}
-      <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
-            <div
-              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                m.sender === "ai"
-                  ? "bg-[#21262D] text-gray-200"
-                  : "bg-[#238636]/25 border border-[#238636]/40 text-gray-100"
-              }`}
-            >
-              {m.text}
-            </div>
-          </div>
-        ))}
-        {typing && (
-          <div className="flex justify-start">
-            <div className="bg-[#21262D] rounded-2xl px-5 py-3.5 flex gap-1.5">
-              {[0, 1, 2].map((d) => (
-                <motion.div
-                  key={d}
-                  className="w-1.5 h-1.5 rounded-full bg-[#A855F7]"
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ duration: 0.6, repeat: Infinity, delay: d * 0.15 }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Input */}
-      <div className="border-t border-[#30363D] p-4 pb-6 flex gap-2 bg-[#21262D] relative z-10">
-        <input
-          className="flex-1 bg-[#161B22] border border-[#30363D] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-[#A855F7] transition-colors"
-          placeholder="Kuch bhi pucho…"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && send()}
-        />
-        <button
-          onClick={send}
-          className="bg-[#A855F7] hover:bg-[#9333EA] text-white rounded-xl px-4 py-3 transition-colors flex items-center justify-center"
-        >
-          <SendHorizontal className="w-5 h-5" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ───────────────────── Particles ───────────────────── */
-const particles = [
-  { id: 0, x: "10%", y: "15%", size: 2, duration: 7, delay: 0 },
-  { id: 1, x: "25%", y: "80%", size: 1.5, duration: 9, delay: 1 },
-  { id: 2, x: "80%", y: "20%", size: 3, duration: 6, delay: 0.5 },
-  { id: 3, x: "60%", y: "70%", size: 1, duration: 8, delay: 2 },
-  { id: 4, x: "40%", y: "40%", size: 2.5, duration: 5, delay: 1.5 },
-  { id: 5, x: "90%", y: "50%", size: 1.8, duration: 10, delay: 0.8 },
-  { id: 6, x: "15%", y: "60%", size: 2.2, duration: 7, delay: 2.5 },
-  { id: 7, x: "70%", y: "10%", size: 1.3, duration: 8, delay: 1.2 },
-  { id: 8, x: "50%", y: "90%", size: 3, duration: 6, delay: 0.3 },
-  { id: 9, x: "35%", y: "30%", size: 1.7, duration: 9, delay: 1.8 },
-];
-
-/* ───────────────────── Partner logos with brand colors ───────────────────── */
-const partnerLogos = [
-  { name: "Swiggy",        bg: "#FC8019", text: "#fff",    emoji: "🛵" },
-  { name: "Zomato",        bg: "#E23744", text: "#fff",    emoji: "🍕" },
-  { name: "Ola",           bg: "#1C1C1C", text: "#fff",    emoji: "🚖" },
-  { name: "Rapido",        bg: "#FFCC00", text: "#000",    emoji: "⚡" },
-  { name: "Urban Company", bg: "#00B4A2", text: "#fff",    emoji: "🔧" },
-  { name: "Dunzo",         bg: "#00D37F", text: "#000",    emoji: "📦" },
-  { name: "Blinkit",       bg: "#F8D000", text: "#000",    emoji: "🟡" },
-  { name: "Zepto",         bg: "#7C3AED", text: "#fff",    emoji: "🚀" },
-];
-
-/* ───────────────────── Feature Cards Data ───────────────────── */
-const features = [
-  {
-    icon: TrendingUp,
-    title: "Daily Allowance",
-    desc: "AI predicts your safe daily spend based on your actual earnings — no more anxiety about running out.",
-  },
-  {
-    icon: Zap,
-    title: "Instant Micro-Loans",
-    desc: "Need ₹5,000 for bike repair? Get it in 4 minutes. Repaid automatically from your next payouts.",
-  },
-  {
-    icon: Shield,
-    title: "₹15/month Insurance",
-    desc: "Income protection, health cover, and accident insurance bundled — auto-claimed, no paperwork.",
-  },
-];
-
-/* ───────────────────── Steps ───────────────────── */
-const steps = [
-  {
-    icon: Bell,
-    title: "Allow notification access",
-    desc: "Mehnat reads your earning notifications from Swiggy, Zomato, Ola, Rapido — all apps, one place. No account linking needed.",
-  },
-  {
-    icon: Clock,
-    title: "Get your daily allowance every morning at 6 AM",
-    desc: "Our AI crunches your earnings and upcoming expenses overnight.",
-  },
-  {
-    icon: Rocket,
-    title: "Access loans and insurance when you need them",
-    desc: "One-tap micro-loans and zero-paperwork insurance, always ready.",
-  },
-];
-
-/* ═══════════════════════ PAGE ═══════════════════════ */
-export default function Home() {
-  const counter = useCountUp(420, 1500);
-
-  return (
-    <main className="pb-20 md:pb-0">
-
-      {/* ─── HERO ─── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-[#0D1117]">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.13)_0%,transparent_70%)]" />
-        </div>
-
-        {particles.map((p) => (
-          <motion.div
-            key={p.id}
-            className="absolute rounded-full bg-purple-400/30"
-            style={{ left: p.x, top: p.y, width: p.size, height: p.size }}
-            animate={{ y: [0, -20, 0], opacity: [0.3, 0.7, 0.3] }}
-            transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
-          />
-        ))}
-
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-24 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          {/* Left — copy */}
-          <motion.div
-            className="flex-1 text-center lg:text-left"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-              Aapki Kamai,
-              <br />
-              Aapka Control
-            </h1>
-            <p className="mt-6 text-lg text-gray-400 max-w-xl mx-auto lg:mx-0">
-              India&apos;s first AI financial OS built for gig workers. Daily spend
-              allowance, instant micro-loans, and ₹15/month insurance — all
-              without a salary slip.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
-              <Link
-                href="/login"
-                className="bg-[#238636] hover:bg-[#2EA043] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                Get Started as a Partner
-              </Link>
-              <Link
-                href="/about"
-                className="border border-[#30363D] text-white hover:border-gray-400 px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                Partner with Us (Swiggy/Zomato)
-              </Link>
-            </div>
-
-            {/* Inline counter pill */}
-            <div ref={counter.ref} className="mt-8 inline-flex items-center gap-3 bg-[#161B22] border border-[#30363D] rounded-full px-5 py-2.5">
-              <span className="text-gray-400 text-sm">Aaj ka safe kharcha:</span>
-              <span className="text-[#238636] font-bold text-xl">₹{counter.value}</span>
-            </div>
-          </motion.div>
-
-          {/* Right — Mini Chat */}
-          <motion.div
-            className="flex-shrink-0 w-full max-w-sm"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
-            <MiniChat />
-          </motion.div>
-        </div>
-      </section>
-
+const newSections = `
       {/* ─── SECTION 2: THE INSIGHT ─── */}
       <section className="py-24 max-w-6xl mx-auto px-6 border-t border-[#21262D]">
         <div className="grid md:grid-cols-3 gap-6 mb-16">
@@ -417,7 +139,15 @@ export default function Home() {
         </div>
       </section>
 
-
+      {/* ─── SECTION 4: LIVE DEMO ─── */}
+      <section className="py-24 max-w-3xl mx-auto px-6 flex flex-col items-center">
+        <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-4">Try Mehnat AI</h2>
+        <p className="text-gray-400 text-center mb-16">Type in Hindi or English — exactly how a rider would</p>
+        
+        <div className="w-full flex justify-center">
+          <MiniChat />
+        </div>
+      </section>
 
       {/* ─── SECTION 5: AI EARNINGS FORECAST ─── */}
       <section className="py-24 max-w-5xl mx-auto px-6">
@@ -438,7 +168,7 @@ export default function Home() {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="day" stroke="#8b949e" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#8b949e" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `₹${val}`} />
+                <YAxis stroke="#8b949e" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => \`₹\${val}\`} />
                 <CartesianGrid strokeDasharray="3 3" stroke="#30363D" vertical={false} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#161B22', borderColor: '#30363D', color: '#fff', borderRadius: '8px' }}
@@ -640,3 +370,8 @@ export default function Home() {
     </main>
   );
 }
+`
+
+const finalContent = beforeMarquee + newSections;
+fs.writeFileSync(pagePath, finalContent, 'utf8');
+console.log("Successfully updated page.tsx!");
